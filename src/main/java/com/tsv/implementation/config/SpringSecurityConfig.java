@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.tsv.implementation.service.DefaultUserService;
@@ -24,6 +25,9 @@ public class SpringSecurityConfig {
 	
 	@Autowired
 	AuthenticationSuccessHandler successHandler;
+	
+	@Autowired
+	AuthFilter filter;
 
 	@Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -46,6 +50,7 @@ public class SpringSecurityConfig {
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {    
         http.csrf().disable()
+        .addFilterBefore(filter, BasicAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers("/registration/**").permitAll()
         .and()
